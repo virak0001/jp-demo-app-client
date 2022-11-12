@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": ["ESNext", "ESNext.AsyncIterable", "DOM"],
+    "esModuleInterop": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "strict": true,
+    "noEmit": true,
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./*"]
+    },
+    "jsx": "preserve",
+    "types": [
+      "vue-axios-http",
+      "@types/node",
+      "@types/lodash",
+      "@nuxt/types",
+      "@nuxtjs/auth-next",
+      "@nuxtjs/axios",
+      "@pinia/nuxt",
+      "@nuxtjs/composition-api",
+      "@nuxtjs/dayjs",
+      "@nuxtjs/i18n",
+      "@chantouchsek/validatorjs"
+    ]
+  },
+  "exclude": ["node_modules", ".nuxt", "dist"]
+}

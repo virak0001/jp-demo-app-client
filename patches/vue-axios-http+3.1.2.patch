@@ -1,0 +1,126 @@
+diff --git a/node_modules/vue-axios-http/dist/core/BaseService.js b/node_modules/vue-axios-http/dist/core/BaseService.js
+index de9a019..b9a84c4 100644
+--- a/node_modules/vue-axios-http/dist/core/BaseService.js
++++ b/node_modules/vue-axios-http/dist/core/BaseService.js
+@@ -5,7 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+ Object.defineProperty(exports, "__esModule", { value: true });
+ const Validator_1 = __importDefault(require("./Validator"));
+ const util_1 = require("../util");
+-const lodash_1 = require("lodash");
++const isObject_1 = __importDefault(require("lodash/isObject"));
++const isArray_1 = __importDefault(require("lodash/isArray"));
+ const qs_1 = __importDefault(require("qs"));
+ const validator = Validator_1.default;
+ const UNPROCESSABLE_ENTITY = 422;
+@@ -37,8 +38,8 @@ class BaseService {
+         return this.post(payload, config);
+     }
+     put(id, payload, config) {
+-        const parameter = id && !(0, lodash_1.isObject)(id) ? `/${id}` : '';
+-        const body = (0, lodash_1.isObject)(id) ? id : payload;
++        const parameter = id && !(0, isObject_1.default)(id) ? `/${id}` : '';
++        const body = (0, isObject_1.default)(id) ? id : payload;
+         const requestType = (0, util_1.hasFiles)(body) ? 'post' : 'put';
+         if ((0, util_1.hasFiles)(body)) {
+             Object.assign(body, { _method: 'put' });
+@@ -46,8 +47,8 @@ class BaseService {
+         return this.submit(requestType, parameter, body, config);
+     }
+     patch(id, payload, config) {
+-        const parameter = id && !(0, lodash_1.isObject)(id) ? `/${id}` : '';
+-        const body = (0, lodash_1.isObject)(id) ? id : payload;
++        const parameter = id && !(0, isObject_1.default)(id) ? `/${id}` : '';
++        const body = (0, isObject_1.default)(id) ? id : payload;
+         return this.submit('patch', parameter, body, config);
+     }
+     update(id, payload) {
+@@ -142,7 +143,7 @@ class BaseService {
+         if (!parameters || !parameters.length) {
+             this.parameters = [];
+         }
+-        else if ((0, lodash_1.isArray)(parameters)) {
++        else if ((0, isArray_1.default)(parameters)) {
+             for (const parameter of parameters) {
+                 delete this.parameters[parameter];
+             }
+diff --git a/node_modules/vue-axios-http/dist/core/Validator.js b/node_modules/vue-axios-http/dist/core/Validator.js
+index caf7395..a16aaac 100644
+--- a/node_modules/vue-axios-http/dist/core/Validator.js
++++ b/node_modules/vue-axios-http/dist/core/Validator.js
+@@ -1,6 +1,13 @@
+ "use strict";
++var __importDefault = (this && this.__importDefault) || function (mod) {
++    return (mod && mod.__esModule) ? mod : { "default": mod };
++};
+ Object.defineProperty(exports, "__esModule", { value: true });
+-const lodash_1 = require("lodash");
++const get_1 = __importDefault(require("lodash/get"));
++const has_1 = __importDefault(require("lodash/has"));
++const omit_1 = __importDefault(require("lodash/omit"));
++const isArray_1 = __importDefault(require("lodash/isArray"));
++const cloneDeep_1 = __importDefault(require("lodash/cloneDeep"));
+ const util_1 = require("../util");
+ class Validator {
+     constructor(errors = {}) {
+@@ -17,10 +24,10 @@ class Validator {
+         }
+     }
+     has(field) {
+-        if ((0, lodash_1.isArray)(field)) {
++        if ((0, isArray_1.default)(field)) {
+             return (0, util_1.is)(Object.keys(this.errors), field);
+         }
+-        let hasError = (0, lodash_1.has)(this.errors, field);
++        let hasError = (0, has_1.default)(this.errors, field);
+         if (!hasError) {
+             const errors = Object.keys(this.errors).filter((e) => e.startsWith(`${field}.`) || e.startsWith(`${field}[`));
+             hasError = errors.length > 0;
+@@ -30,7 +37,7 @@ class Validator {
+     first(field) {
+         if (Array.isArray(field)) {
+             for (let i = 0; i < field.length; i++) {
+-                if (!(0, lodash_1.has)(this.errors, field[i])) {
++                if (!(0, has_1.default)(this.errors, field[i])) {
+                     continue;
+                 }
+                 return this.first(field[i]);
+@@ -76,7 +83,7 @@ class Validator {
+         return Object.keys(errors).length > 0;
+     }
+     get(field) {
+-        return (0, lodash_1.get)(this.errors, field) || [];
++        return (0, get_1.default)(this.errors, field) || [];
+     }
+     all() {
+         return this.errors;
+@@ -94,7 +101,7 @@ class Validator {
+         if (!attribute) {
+             return this.flush();
+         }
+-        const errors = (0, lodash_1.omit)((0, lodash_1.cloneDeep)(this.errors), attribute);
++        const errors = (0, omit_1.default)((0, cloneDeep_1.default)(this.errors), attribute);
+         this.fill(errors);
+     }
+     isValid() {
+diff --git a/node_modules/vue-axios-http/dist/index.js b/node_modules/vue-axios-http/dist/index.js
+index f0a9e53..38e5297 100644
+--- a/node_modules/vue-axios-http/dist/index.js
++++ b/node_modules/vue-axios-http/dist/index.js
+@@ -22,7 +22,7 @@ const BaseService_1 = __importDefault(require("./core/BaseService"));
+ exports.BaseService = BaseService_1.default;
+ const Validator_1 = __importDefault(require("./core/Validator"));
+ exports.Validator = Validator_1.default;
+-const lodash_1 = require("lodash");
++const merge_1 = __importDefault(require("lodash/merge"));
+ // augment typings of Vue.js
+ require("./vue");
+ class AxiosHttp {
+@@ -38,7 +38,7 @@ class AxiosHttp {
+         if (this.installed)
+             return;
+         this.installed = true;
+-        const defaultOption = (0, lodash_1.merge)({
++        const defaultOption = (0, merge_1.default)({
+             parsedQs: this.parsedQs,
+             errorProperty: 'errors',
+         }, options);

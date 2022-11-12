@@ -1,0 +1,23 @@
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.08s ease-in;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.vue-scroll-picker {
+  height: 6em !important;
+}
+
+body {
+  height: 100%;
+}
+
+html,
+#__nuxt,
+#__layout {
+  height: 100%;
+}
